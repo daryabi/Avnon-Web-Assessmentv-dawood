@@ -1,0 +1,11 @@
+<div class="inline-flex items-center gap-0 bg-slate-100 p-1 rounded-full border border-slate-200">
+ <div class="relative group">
+  <input type="month" [ngModel]="startDateStr()" (ngModelChange)="updateStartDate($event)"
+   class="bg-white/50 hover:bg-white focus:bg-white transition-all px-3 py-1.5 rounded-full text-sm font-medium text-slate-700 outline-none border border-transparent focus:border-blue-300 focus:shadow-sm cursor-pointer">
+ </div>
+ <div class="px-2 text-slate-400 text-sm font-light">to</div>
+ <div class="relative group">
+  <input type="month" [ngModel]="endDateStr()" (ngModelChange)="updateEndDate($event)"
+   class="bg-white/50 hover:bg-white focus:bg-white transition-all px-3 py-1.5 rounded-full text-sm font-medium text-slate-700 outline-none border border-transparent focus:border-blue-300 focus:shadow-sm cursor-pointer">
+ </div>
+</div>

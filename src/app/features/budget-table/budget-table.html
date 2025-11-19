@@ -1,0 +1,144 @@
+<div class="flex-1 overflow-auto relative h-full">
+    <table class="w-full border-collapse">
+          <!-- Header -->
+          <thead class="sticky top-0 z-30 bg-gray-100 shadow-sm">
+               <tr>
+                    <th
+                    class="p-3 text-left w-[300px] min-w-[250px] sticky left-0 bg-gray-100 border-r border-gray-300 z-40">
+                         Category</th>
+                    @for (month of service.months(); track month.key) {
+                    <th class="p-3 min-w-[120px] text-right font-semibold text-gray-600 border-r border-gray-200">{{
+                    month.label }}
+                        </th>
+                    }
+                    <th class="p-3 w-[60px] text-center sticky right-0 bg-gray-100 z-30">Delete</th>
+                   </tr>
+              </thead>
+
+          <tbody>
+               <!-- Income -->
+               <ng-container
+                *ngTemplateOutlet="sectionTemplate; context: { $implicit: service.income, color: 'emerald' }"></ng-container>
+               <!-- Expenses  -->
+               <ng-container    
+                *ngTemplateOutlet="sectionTemplate; context: { $implicit: service.expenses, color: 'rose' }"></ng-container>
+
+               <!-- Spacer -->
+               <tr class="h-8 bg-gray-50">
+                    <td [colSpan]="service.months().length + 2"></td>
+                   </tr>
+
+               <!-- Profit / Loss -->
+               <tr class="bg-gray-900 text-white font-bold text-base">
+                    <td class="p-3 sticky left-0 bg-gray-900 z-20 border-r border-gray-700">Profit / Loss</td>
+                    @for (m of service.months(); track m.key) {
+                    <td class="p-3 text-right border-r border-gray-800">{{ service.profitAndLoss().get(m.key) |
+                    number:'1.0-0' }}
+                        </td>
+                    }
+                    <td class="bg-gray-900"></td>
+                   </tr>
+
+               <!-- Opening Balance -->
+               <tr class="bg-gray-100 text-gray-600 font-semibold">
+                    <td class="p-3 sticky left-0 bg-gray-100 z-20 border-r border-gray-300">Opening Balance</td>
+                    @for (m of service.months(); track m.key) {
+                    <td class="p-3 text-right border-r border-gray-200">{{ service.openingBalance().get(m.key) |
+                    number:'1.0-0' }}
+                        </td>
+                    }
+                    <td class="bg-gray-100"></td>
+                   </tr>
+
+               <!-- Closing Balance -->
+               <tr class="bg-blue-600 text-white font-bold text-lg">
+                    <td class="p-3 sticky left-0 bg-blue-600 z-20 border-r border-blue-500">Closing Balance</td>
+                    @for (m of service.months(); track m.key) {
+                    <td class="p-3 text-right border-r border-blue-500">{{ service.closingBalance().get(m.key) |
+                    number:'1.0-0' }}
+                        </td>
+                    }
+                    <td class="bg-blue-600"></td>
+                   </tr>
+              </tbody>
+         </table>
+</div>
+
+
+<ng-template #sectionTemplate let-section let-color="color">
+     <!-- Section Title  -->
+     <tr class="bg-gray-50">
+          <td
+            class="p-4 font-bold text-lg uppercase tracking-wider sticky left-0 bg-gray-50 z-20 border-r border-gray-200"
+               [ngClass]="{'text-emerald-700': color === 'emerald', 'text-rose-700': color === 'rose'}">{{
+            section.title }}</td>
+          <td [colSpan]="service.months().length + 1" class="bg-gray-50"></td>
+         </tr>
+     @for (cat of section.categories(); track cat.id) {
+     <tr class="bg-white group">
+          <td class="p-2 pl-8 font-bold text-gray-800 sticky left-0 bg-white border-r border-gray-200 border-t">{{
+            cat.title
+               }}</td>
+          <td [colSpan]="service.months().length + 1" class="border-t border-gray-100"></td>
+         </tr>
+
+     @for (row of cat.rows(); track row.id) {
+     <tr class="group hover:bg-yellow-50 transition-colors"> 
+          <td class="p-0 border-r border-b border-gray-200 sticky left-0 bg-white group-hover:bg-yellow-50 z-20">
+               <input type="text" [ngModel]="row.name()" (ngModelChange)="row.name.set($event)"    
+                class="w-full h-full px-8 py-2 bg-transparent outline-none focus:text-black">
+              </td>
+          @for (m of service.months(); track m.key; let i = $index) {
+          <td class="p-0 border-r border-b border-gray-100 relative">
+               <input #cellInput type="number" [ngModel]="row.values.get(m.key)?.()"    
+                (ngModelChange)="row.values.get(m.key)?.set($event)"
+                (contextmenu)="onContextMenu($event, row.id, m.key)"    
+                (keydown)="onKeyNavigation($event, row.id, i)"    
+                class="w-full h-full text-right px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white focus:z-10">
+              </td>
+          }
+          <td class="p-0 border-b border-gray-100">
+               <app-delete-row-btn (delete)="deleteRow(row.id)" />
+              </td>
+         </tr>
+     }
+     <tr class="bg-white">
+          <td class="p-0 border-r border-b border-gray-200 sticky left-0 bg-white z-20">
+               <input #newInput type="text" placeholder="+ Add new {{ cat.title }}"    
+                (keydown.enter)="service.addRow(cat.id, newInput.value); newInput.value=''"    
+                class="w-full h-full px-8 py-2 italic text-gray-400 outline-none">
+              </td>
+          <td [colSpan]="service.months().length + 1" class="border-b border-gray-200"></td>
+         </tr>
+
+     <tr class="bg-gray-50/50 font-bold text-gray-600 text-xs uppercase">
+          <td class="py-2 pl-8 sticky left-0 bg-gray-50 z-20 border-r border-gray-200">Sub Total</td>
+          @for (m of service.months(); track m.key) {
+          <td class="py-2 px-3 text-right border-r border-gray-200 bg-gray-50/30">{{ cat.subTotal().get(m.key) |
+               number:'1.0-0' }}</td>
+          }
+          <td class="bg-gray-50/30"></td>
+         </tr>
+     }
+     <tr class="bg-gray-50 border-t border-gray-300">
+          <td class="p-0 border-r border-gray-200 sticky left-0 bg-gray-50 z-20 h-12">
+               <input #newCatInput type="text" placeholder="+ Add New Parent Category"    
+                (keydown.enter)="service.addCategory(section.id, newCatInput.value); newCatInput.value=''"    
+                class="w-full h-full px-4 font-bold uppercase text-gray-500 placeholder-gray-400 bg-transparent outline-none focus:text-gray-900 focus:bg-white transition-colors">
+              </td>
+          <td [colSpan]="service.months().length + 1" class="bg-gray-50"></td>
+         </tr>
+
+     <tr [ngClass]="color === 'emerald' ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'"  
+        class="font-bold text-sm border-t-2 border-white">
+          <td class="p-3 sticky left-0 z-20 border-r border-white/50"   
+            [ngClass]="color === 'emerald' ? 'bg-emerald-100' : 'bg-rose-100'">{{ section.title }} Total</td>
+          @for (m of service.months(); track m.key) {
+          <td class="p-3 text-right border-r border-white/50">{{ section.total().get(m.key) | number:'1.0-0' }}</td>
+          }
+          <td [ngClass]="color === 'emerald' ? 'bg-emerald-100' : 'bg-rose-100'"></td>
+         </tr>
+</ng-template>
+
+<!-- Context Menu -->
+@if (menu().visible) { <app-context-menu [x]="menu().x" [y]="menu().y" (action)="applyToAll()" /> }

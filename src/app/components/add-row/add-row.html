@@ -1,0 +1,8 @@
+<tr class="bg-white">
+     <td class="p-0 border-r border-b border-gray-200 sticky left-0 bg-white z-20">
+         <input #newInput type="text" [placeholder]="'+ Add new ' + categoryTitle"
+            (keydown.enter)="handleAdd(newInput)"
+            class="w-full h-full px-8 py-2 italic text-gray-400 outline-none hover:text-gray-600 focus:text-gray-800 transition-colors">
+        </td>
+    <td [colSpan]="colSpan" class="border-b border-gray-200"></td>
+</tr>

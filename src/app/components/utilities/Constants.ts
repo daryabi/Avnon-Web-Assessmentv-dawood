@@ -1,0 +1,17 @@
+export const DELETE_MSG = "Are you sure you want to delete this item?";
+export const KEYWORDS_ARROW = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+export const ARROW_RIGHT = "ArrowRight";
+export const ARROW_LEFT = "ArrowLeft";
+export const ARROW_DOWN = "ArrowDown";
+export const ARROW_UP = "ArrowUp";
+export const INCOME_STR = "income";
+export const GENERAL_INCOME = "General Income";
+export const OTHER_INCOME = "Other Income";
+export const OPERATIONAL_EXPENSES = "Operational Expenses";
+export const SALARIES_WAGES = "Salaries & Wages";
+export const EXPENSES = "expenses";
+export const DEFAULT = "default";
+export const SHORT = "short";
+export const NUMERIC = "numeric";
+export const SAMPLE_ITEM = "Sample Item";
+export const BODY = "BODY";
